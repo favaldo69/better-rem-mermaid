@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
-  "id": "mermaid",
-  "name": "Mermaid",
+  "id": "better-rem-mermaid",
+  "name": "Better Rem Mermaid",
   "author": "favaldo69",
   "repoUrl": "https://github.com/favaldo69/better-rem-mermaid",
   "enableOnMobile": true,
