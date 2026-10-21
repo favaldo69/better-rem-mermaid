@@ -1,0 +1,21 @@
+{
+  "manifestVersion": 1,
+  "id": "mermaid",
+  "name": "Mermaid",
+  "author": "karthikeyan",
+  "repoUrl": "https://github.com/remnoteio/remnote-official-plugins",
+  "enableOnMobile": true,
+  "version": {
+    "major": 0,
+    "minor": 8,
+    "patch": 0
+  },
+  "description": "Render Mermaid diagrams directly from code blocks, with themes that follow RemNote",
+  "requestNative": false,
+  "requiredScopes": [
+    {
+      "type": "All",
+      "level": "ReadCreateModify"
+    }
+  ]
+}
