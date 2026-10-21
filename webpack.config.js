@@ -4,7 +4,7 @@ var path = require("path");
 
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { ESBuildMinifyPlugin } = require("esbuild-loader");
-const { ProvidePlugin } = require("webpack");
+const { ProvidePlugin, BannerPlugin } = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 
@@ -17,17 +17,21 @@ const isDevelopment = !isProd;
 
 const fastRefresh = isDevelopment ? new ReactRefreshWebpackPlugin() : null;
 
+/** Suffix for the sandboxed variant of the index plugin. */
+const SANDBOX_SUFFIX = "-sandbox";
+
 const config = {
   mode: isProd ? "production" : "development",
-  // One entry per widget. The index plugin (`index.tsx`) is loaded by RemNote
-  // directly and must not be emitted as a widget bundle.
-  entry: glob
-    .sync("./src/widgets/*.tsx")
-    .filter((el) => path.parse(el).name !== "index")
-    .reduce(function (obj, el) {
-      obj[path.parse(el).name] = el;
-      return obj;
-    }, {}),
+  // One entry per widget, plus the index plugin (`index.tsx`), which RemNote
+  // loads as `index.js` to run `onActivate`. Sandboxed plugins also request a
+  // `<name>-sandbox.js` build of the same source, so emit both variants.
+  entry: glob.sync("./src/widgets/*.tsx").reduce(function (obj, el) {
+    const name = path.parse(el).name;
+    obj[name] = el;
+    // RemNote loads `widgetName + "-sandbox"` for sandboxed plugin widgets.
+    obj[`${name}${SANDBOX_SUFFIX}`] = el;
+    return obj;
+  }, {}),
 
   output: {
     path: resolve(__dirname, "dist"),
@@ -54,7 +58,9 @@ const config = {
       {
         test: /\.css$/i,
         use: [
-          MiniCssExtractPlugin.loader,
+          // In development styles are injected from JS so the same bundle works
+          // inside RemNote's sandboxed iframe; production extracts real CSS files.
+          isDevelopment ? "style-loader" : MiniCssExtractPlugin.loader,
           { loader: "css-loader", options: { url: false } },
           "postcss-loader",
         ],
@@ -62,9 +68,7 @@ const config = {
     ],
   },
   plugins: [
-    new MiniCssExtractPlugin({
-      filename: "App.css",
-    }),
+    isDevelopment ? undefined : new MiniCssExtractPlugin({ filename: "[name].css" }),
     new HtmlWebpackPlugin({
       templateContent: `
       <body></body>
@@ -76,7 +80,7 @@ const config = {
 
       const s = document.createElement('script');
       s.type = "module";
-      s.src = widgetName+".js";
+      s.src = widgetName+"${SANDBOX_SUFFIX}.js";
       document.body.appendChild(s);
       </script>
     `,
@@ -85,6 +89,20 @@ const config = {
     }),
     new ProvidePlugin({
       React: "react",
+    }),
+    /*
+     * The SDK's renderWidget reads IMPORT_META.url to identify native (non-sandboxed)
+     * widgets. import.meta is invalid inside a sandboxed iframe, so only define it
+     * for the normal builds; the sandbox builds rely on the SDK's try/catch fallback.
+     */
+    new BannerPlugin({
+      banner: (file) => {
+        // JavaScript only — the CSS assets produced by MiniCssExtract would be corrupted.
+        if (!file.filename.endsWith(".js")) return "";
+        if (file.chunk.name.includes(SANDBOX_SUFFIX)) return "";
+        return "const IMPORT_META=import.meta;";
+      },
+      raw: true,
     }),
     new CopyPlugin({
       patterns: [{ from: "public", to: "" }],

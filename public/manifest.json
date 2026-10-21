@@ -2,8 +2,8 @@
   "manifestVersion": 1,
   "id": "mermaid",
   "name": "Mermaid",
-  "author": "karthikeyan",
-  "repoUrl": "https://github.com/remnoteio/remnote-official-plugins",
+  "author": "favaldo69",
+  "repoUrl": "https://github.com/favaldo69/better-rem-mermaid",
   "enableOnMobile": true,
   "version": {
     "major": 0,

@@ -62,3 +62,8 @@ npm run build         # produces PluginZip.zip
 
 > **Note:** if your global npm cache isn't writable, install with a local cache:
 > `npm install --cache ./.npm-cache`.
+
+## Credits
+
+Originally based on the [RemNote official Mermaid plugin](https://github.com/remnoteio/remnote-official-plugins/tree/main/mermaid)
+by karthikeyan, used under the MIT license. See [LICENSE](LICENSE).
