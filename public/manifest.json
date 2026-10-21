@@ -5,6 +5,7 @@
   "author": "favaldo69",
   "repoUrl": "https://github.com/favaldo69/better-rem-mermaid",
   "enableOnMobile": true,
+  "unlisted": true,
   "version": {
     "major": 0,
     "minor": 8,
