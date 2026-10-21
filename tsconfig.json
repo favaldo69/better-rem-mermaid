@@ -3,18 +3,16 @@
     "target": "esnext",
     "module": "esnext",
     "jsx": "preserve",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "strict": false,
     "strictNullChecks": true,
     "noEmit": true,
     "allowJs": true,
     "skipLibCheck": true,
     "isolatedModules": true,
-    "esModuleInterop": true,
-    "allowImportingTsExtensions": true
+    "esModuleInterop": true
   },
   "include": [
-    "src",
-    "test"
+    "src"
   ]
 }

@@ -8,10 +8,10 @@
   "unlisted": true,
   "version": {
     "major": 0,
-    "minor": 8,
-    "patch": 2
+    "minor": 9,
+    "patch": 0
   },
-  "description": "Render Mermaid diagrams directly from code blocks, with themes that follow RemNote",
+  "description": "Mermaid diagrams from code blocks: collapsible source and selectable themes",
   "requestNative": false,
   "requiredScopes": [
     {
