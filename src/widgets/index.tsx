@@ -113,7 +113,14 @@ async function tagFocusedRemAsMermaid(plugin: ReactRNPlugin): Promise<void> {
 }
 
 async function onActivate(plugin: ReactRNPlugin) {
-  await registerSettings(plugin);
+  // Diagnostic: confirms the index plugin actually runs.
+  console.log("[mermaid] onActivate started");
+  try {
+    await registerSettings(plugin);
+    console.log("[mermaid] settings registered");
+  } catch (error) {
+    console.error("[mermaid] settings registration FAILED", error);
+  }
 
   // --- Powerup (legacy path) -------------------------------------------------
   // Register only if missing so we never overwrite the user's powerup.
@@ -131,15 +138,25 @@ async function onActivate(plugin: ReactRNPlugin) {
 
   // --- Widgets ---------------------------------------------------------------
   // Primary path: any Rem whose code block is tagged with the Mermaid language.
-  await plugin.app.registerWidget("mermaid", WidgetLocation.UnderRemEditor, {
-    dimensions: { height: "auto", width: "100%" },
-  });
+  try {
+    await plugin.app.registerWidget("mermaid", WidgetLocation.UnderRemEditor, {
+      dimensions: { height: "auto", width: "100%" },
+    });
+    console.log("[mermaid] registered widget: mermaid");
+  } catch (error) {
+    console.error("[mermaid] registerWidget(mermaid) FAILED", error);
+  }
 
   // Legacy path: Rems tagged with the powerup created by earlier versions.
-  await plugin.app.registerWidget("mermaid_legacy", WidgetLocation.UnderRemEditor, {
-    dimensions: { height: "auto", width: "100%" },
-    powerupFilter: MERMAID_POWERUP,
-  });
+  try {
+    await plugin.app.registerWidget("mermaid_legacy", WidgetLocation.UnderRemEditor, {
+      dimensions: { height: "auto", width: "100%" },
+      powerupFilter: MERMAID_POWERUP,
+    });
+    console.log("[mermaid] registered widget: mermaid_legacy");
+  } catch (error) {
+    console.error("[mermaid] registerWidget(mermaid_legacy) FAILED", error);
+  }
 
   // --- Commands --------------------------------------------------------------
 
@@ -210,6 +227,8 @@ async function onActivate(plugin: ReactRNPlugin) {
       await plugin.app.toast("Converted to a Mermaid code-block diagram.");
     },
   });
+
+  console.log("[mermaid] onActivate finished");
 }
 
 async function onDeactivate(_: ReactRNPlugin) {}

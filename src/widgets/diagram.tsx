@@ -64,6 +64,19 @@ export const MermaidDiagram = ({ remId, settings, themeOverride, sourceOverride 
   const detection = useMermaidDetection(richText, settings);
   const source = sourceOverride ?? detection?.source;
 
+  // Diagnostic: shows exactly what detection sees for this Rem.
+  // Remove once the plugin is confirmed working.
+  console.log("[mermaid] rem text", remId, {
+    elements: (richText ?? []).map((element) => ({
+      i: (element as any)?.i,
+      code: (element as any)?.code,
+      language: (element as any)?.language,
+      text: typeof (element as any)?.text === "string" ? (element as any).text.slice(0, 60) : undefined,
+    })),
+    detection,
+    detectUnlabeled: settings.detectUnlabeled,
+  });
+
   const doRender = useCallback(async () => {
     if (!source) return;
     const generation = ++generationRef.current;

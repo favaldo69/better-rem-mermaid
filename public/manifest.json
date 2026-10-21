@@ -9,7 +9,7 @@
   "version": {
     "major": 0,
     "minor": 8,
-    "patch": 1
+    "patch": 2
   },
   "description": "Render Mermaid diagrams directly from code blocks, with themes that follow RemNote",
   "requestNative": false,

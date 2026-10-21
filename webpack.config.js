@@ -119,12 +119,18 @@ const config = {
  */
 config.optimization = {
   ...(config.optimization || {}),
+  /*
+   * Only the *widget* bundles share a vendor chunk. The index plugin is loaded by
+   * RemNote on its own, with no knowledge of vendor.js, so it must be fully
+   * self-contained — splitting its dependencies out would leave it unable to run
+   * (no SDK bootstrap, so onActivate never fires).
+   */
   splitChunks: {
     cacheGroups: {
       vendor: {
         test: /[\\/]node_modules[\\/]/,
         name: "vendor",
-        chunks: "all",
+        chunks: (chunk) => !String(chunk.name ?? "").startsWith("index"),
         enforce: true,
       },
     },
@@ -151,6 +157,15 @@ if (isProd) {
     allowedHosts: "all",
     headers: {
       "Access-Control-Allow-Origin": "*",
+    },
+    setupMiddlewares(middlewares, devServer) {
+      // Temporary diagnostic: log every request so we can see whether RemNote
+      // ever asks for the plugin bundles.
+      devServer.app.use((req, _res, next) => {
+        console.log(`[dev-server] ${req.method} ${req.originalUrl}`);
+        next();
+      });
+      return middlewares;
     },
   };
 }

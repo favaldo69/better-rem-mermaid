@@ -13,6 +13,10 @@ export const MermaidWidget = () => {
   const settings = useMermaidSettings();
   const remId = widgetContext?.remId;
 
+  // Diagnostic: proves whether the widget mounts at all and what context it gets.
+  // Remove once the plugin is confirmed working.
+  console.log("[mermaid] widget mounted", { widgetContext, remId, hasSettings: !!settings });
+
   if (!remId || !settings) return null;
 
   return <MermaidDiagram remId={remId} settings={settings} />;
